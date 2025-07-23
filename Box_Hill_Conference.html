@@ -1,0 +1,37 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Conference Box Hill Map</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <style>
+    html, body, #map {{ height: 100%; margin: 0; }}
+  </style>
+</head>
+<body>
+<div id="map"></div>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+  const map = L.map('map').setView([-37.8215, 145.1261], 15);  // Glen Waverley coordinates
+
+  L.tileLayer('https://{{s}}.tile.openstreetmap.org/{{z}}/{{x}}/{{y}}.png', {{
+    attribution: '&copy; OpenStreetMap contributors'
+  }}).addTo(map);
+
+  fetch('Box_Hill_Conference.geojson')
+    .then(res => res.json())
+    .then(data => {{
+      const layer = L.geoJSON(data, {{
+        style: {{ color: '#cc3300', weight: 2, fillOpacity: 0.4 }},
+        onEachFeature: (feature, layer) => {{
+          const name = feature.properties?.name || 'Feature';
+          layer.bindPopup(`<b>${{name}}</b>`);
+        }}
+      }}).addTo(map);
+      map.fitBounds(layer.getBounds());
+    }});
+</script>
+</body>
+</html>
